@@ -30,6 +30,7 @@ LIBS:atmel
 LIBS:contrib
 LIBS:valves
 LIBS:tinkerforge
+LIBS:rgb-led-matrix-cache
 EELAYER 25 0
 EELAYER END
 $Descr A3 16535 11693
@@ -193,7 +194,7 @@ U 1 1 54F7633D
 P 2100 650
 F 0 "FB1" H 2100 800 60  0000 C CNN
 F 1 "FILTER" H 2100 550 60  0000 C CNN
-F 2 "kicad-libraries:0603E" H 2100 650 60  0001 C CNN
+F 2 "kicad-libraries:1206" H 2100 650 60  0001 C CNN
 F 3 "" H 2100 650 60  0000 C CNN
 	1    2100 650 
 	-1   0    0    -1  
@@ -4621,7 +4622,7 @@ F 1 "AKL_5_2" H 2885 600 60  0000 C CNN
 F 2 "kicad-libraries:AKL_5_2" H 2900 700 60  0001 C CNN
 F 3 "" H 2900 700 60  0000 C CNN
 	1    2900 700 
-	1    0    0    -1  
+	1    0    0    1   
 $EndComp
 Wire Wire Line
 	1300 1350 1400 1350
