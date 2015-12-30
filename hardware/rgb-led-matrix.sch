@@ -10,7 +10,6 @@ LIBS:cmos4000
 LIBS:adc-dac
 LIBS:memory
 LIBS:xilinx
-LIBS:special
 LIBS:microcontrollers
 LIBS:dsp
 LIBS:microchip
@@ -4655,4 +4654,6 @@ Wire Wire Line
 	2700 1150 2700 750 
 Wire Wire Line
 	2700 650  2450 650 
+Text Notes 3800 7100 0    630  ~ 0
+TODO: ADD Voltage measurement
 $EndSCHEMATC
