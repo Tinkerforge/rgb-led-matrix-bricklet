@@ -26,20 +26,30 @@
 #include <stdbool.h>
 
 #define MATRIX_SIZE 64
+#define MATRIX_CHANNELS 3
+#define MATRIX_STUFFED_BITS_PER_BIT 8
+#define MATRIX_STUFFED_SIZE MATRIX_SIZE*MATRIX_CHANNELS*MATRIX_STUFFED_BITS_PER_BIT
 
 typedef struct {
 	uint8_t r[MATRIX_SIZE];
 	uint8_t g[MATRIX_SIZE];
 	uint8_t b[MATRIX_SIZE];
-} MatrixBuffer;
+} MatrixBufferIn;
 
 typedef struct {
-	MatrixBuffer buffer_in;
-	MatrixBuffer buffer_out;
+	uint8_t r[MATRIX_SIZE];
+	uint8_t g[MATRIX_SIZE];
+	uint8_t b[MATRIX_SIZE];
+} MatrixBufferOut;
+
+typedef struct {
+	MatrixBufferIn buffer_in;
+	uint8_t  buffer_out[MATRIX_STUFFED_SIZE];
 	uint16_t frame_duration;
 	uint32_t frame_number;
 
 	bool     frame_started;
+	uint32_t frame_current_index;
 	uint32_t frame_last_time;
 } Matrix;
 
