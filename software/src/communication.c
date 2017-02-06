@@ -25,6 +25,8 @@
 #include "bricklib2/protocols/tfp/tfp.h"
 #include "matrix.h"
 
+#include <string.h>
+
 extern Matrix matrix;
 
 BootloaderHandleMessageResponse handle_message(const void *message, void *response) {
