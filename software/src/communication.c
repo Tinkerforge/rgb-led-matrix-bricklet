@@ -23,6 +23,9 @@
 
 #include "bricklib2/utility/communication_callback.h"
 #include "bricklib2/protocols/tfp/tfp.h"
+#include "matrix.h"
+
+extern Matrix matrix;
 
 BootloaderHandleMessageResponse handle_message(const void *message, void *response) {
 	switch(tfp_get_fid_from_message(message)) {
@@ -42,56 +45,72 @@ BootloaderHandleMessageResponse handle_message(const void *message, void *respon
 
 
 BootloaderHandleMessageResponse set_red(const SetRed *data) {
+	memcpy(matrix.buffer_in.r, data->red, MATRIX_SIZE);
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
 BootloaderHandleMessageResponse get_red(const GetRed *data, GetRedResponse *response) {
 	response->header.length = sizeof(GetRedResponse);
+	memcpy(response->red, matrix.buffer_in.r, MATRIX_SIZE);
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
 
 BootloaderHandleMessageResponse set_green(const SetGreen *data) {
+	memcpy(matrix.buffer_in.g, data->green, MATRIX_SIZE);
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
 BootloaderHandleMessageResponse get_green(const GetGreen *data, GetGreenResponse *response) {
 	response->header.length = sizeof(GetGreenResponse);
+	memcpy(response->green, matrix.buffer_in.g, MATRIX_SIZE);
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
 
 BootloaderHandleMessageResponse set_blue(const SetBlue *data) {
+	memcpy(matrix.buffer_in.b, data->blue, MATRIX_SIZE);
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
 BootloaderHandleMessageResponse get_blue(const GetBlue *data, GetBlueResponse *response) {
 	response->header.length = sizeof(GetBlueResponse);
+	memcpy(response->blue, matrix.buffer_in.b, MATRIX_SIZE);
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
 
 BootloaderHandleMessageResponse set_frame_duration(const SetFrameDuration *data) {
+	if(data->frame_duration > 0 && data->frame_duration < 10) {
+		return HANDLE_MESSAGE_RESPONSE_INVALID_PARAMETER;
+	}
+
+	matrix.frame_duration = data->frame_duration;
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
 BootloaderHandleMessageResponse get_frame_duration(const GetFrameDuration *data, GetFrameDurationResponse *response) {
-	response->header.length = sizeof(GetFrameDurationResponse);
+	response->header.length  = sizeof(GetFrameDurationResponse);
+	response->frame_duration = matrix.frame_duration;
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
 
 BootloaderHandleMessageResponse draw_frame(const DrawFrame *data) {
+	if(matrix.frame_duration != 0) {
+		matrix_draw_frame(&matrix);
+	}
 
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
 BootloaderHandleMessageResponse get_supply_voltage(const GetSupplyVoltage *data, GetSupplyVoltageResponse *response) {
 	response->header.length = sizeof(GetSupplyVoltageResponse);
+	response->voltage       = 42; // TODO: Implement me!
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
@@ -105,9 +124,13 @@ bool handle_frame_started_callback(void) {
 
 	if(!is_buffered) {
 		tfp_make_default_header(&cb.header, bootloader_get_uid(), sizeof(FrameStartedCallback), FID_CALLBACK_FRAME_STARTED);
-		// TODO: Implement FrameStarted callback handling
-
-		return false;
+		if(matrix.frame_started) {
+			cb.frame_number = matrix.frame_number;
+			is_buffered = true;
+			matrix.frame_started = false;
+		} else {
+			return false;
+		}
 	}
 
 	if(bootloader_spitfp_is_send_possible(&bootloader_status.st)) {
