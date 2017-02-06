@@ -30,11 +30,12 @@
 
 #include <string.h>
 
+#define MATRIX_SPI_FREQUENCY 6400000
 #define matrix_tx_irq_handler IRQ_Hdlr_12
 
 extern Matrix matrix;
 
-                                       // @10MHz
+                                       // @6.4MHz
 #define MATRIX_HIGH_PATTERN 0b11000000 // 0.25us  + 0.75us
 #define MATRIX_LOW_PATTERN  0b11111000 // 0.625us + 0.375us
 
@@ -77,7 +78,7 @@ void matrix_init(Matrix *matrix) {
 
 	// USIC channel configuration
 	const XMC_SPI_CH_CONFIG_t channel_config = {
-		.baudrate       = 10000000,
+		.baudrate       = MATRIX_SPI_FREQUENCY,
 		.bus_mode       = XMC_SPI_CH_BUS_MODE_MASTER,
 		.selo_inversion = XMC_SPI_CH_SLAVE_SEL_INV_TO_MSLS,
 		.parity_mode    = XMC_USIC_CH_PARITY_MODE_NONE
