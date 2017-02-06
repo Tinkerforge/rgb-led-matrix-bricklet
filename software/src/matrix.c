@@ -51,19 +51,19 @@ void __attribute__((optimize("-O3"))) matrix_tx_irq_handler(void) {
 }
 
 void matrix_draw_frame(Matrix *matrix) {
-	uint32_t counter = 0;
+	uint32_t buffer_out_counter = 0;
 	for(uint32_t i = 0; i < MATRIX_SIZE; i++) {
 		for(uint8_t j = 0; j < MATRIX_CHANNELS; i++) {
-			for(uint8_t k = 0; k < MATRIX_STUFFED_BITS_PER_BIT; k++) {
-				uint8_t byte = 0;
-				switch(j) {
-					case 0: byte = matrix->buffer_in.r[i]; break;
-					case 1: byte = matrix->buffer_in.g[i]; break;
-					case 2: byte = matrix->buffer_in.b[i]; break;
-				}
+			uint8_t byte = 0;
+			switch(j) {
+				case 0: byte = matrix->buffer_in.r[i]; break;
+				case 1: byte = matrix->buffer_in.g[i]; break;
+				case 2: byte = matrix->buffer_in.b[i]; break;
+			}
 
-				matrix->buffer_out[counter] = (byte & (1 << k)) ? MATRIX_HIGH_PATTERN : MATRIX_LOW_PATTERN; break;
-				counter++;
+			for(uint8_t k = 0; k < MATRIX_STUFFED_BITS_PER_BIT; k++) {
+				matrix->buffer_out[buffer_out_counter] = (byte & (1 << k)) ? MATRIX_HIGH_PATTERN : MATRIX_LOW_PATTERN;
+				buffer_out_counter++;
 			}
 		}
 	}
