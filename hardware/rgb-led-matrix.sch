@@ -4545,8 +4545,6 @@ Wire Wire Line
 	14100 4000 14100 3600
 Wire Wire Line
 	14100 3500 13850 3500
-Text Notes 12400 2150 0    630  ~ 0
-TODO: ADD Voltage measurement
 $Comp
 L R R3
 U 1 1 56C305E7

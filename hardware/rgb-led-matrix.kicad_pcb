@@ -14,12 +14,12 @@
 
   (page A4)
   (title_block
-    (title "RGB LED Bricklet")
-    (date "Mi 18 Nov 2015")
+    (title "RGB LED Matrix Bricklet")
+    (date 2017-02-08)
     (rev 1.0)
     (company "Tinkerforge GmbH")
     (comment 1 "Licensed under CERN OHL v.1.1")
-    (comment 2 "Copyright (©) 2015, B.Nordmeyer <bastian@tinkerforge.com>")
+    (comment 2 "Copyright (©) 2017, B.Nordmeyer <bastian@tinkerforge.com>")
   )
 
   (layers
@@ -9736,7 +9736,7 @@
   (gr_arc (start 184.8 56.8) (end 184.8 54.3) (angle 90) (layer Edge.Cuts) (width 0.381))
   (gr_arc (start 114.8 56.8) (end 112.3 56.8) (angle 90) (layer Edge.Cuts) (width 0.381))
   (gr_arc (start 114.8 106.8) (end 114.8 109.3) (angle 90) (layer Edge.Cuts) (width 0.381))
-  (gr_text "Copyright Tinkerforge GmbH 2015.\nThis documentation describes Open Hardware and is licensed under the\nCERN OHL v. 1.1.\nYou may redistribute and modify this documentation under the terms of the\nCERN OHL v.1.1. (http://ohwr.org/cernohl). This documentation is distributed\nWITHOUT ANY EXPRESS OR IMPLIED WARRANTY, INCLUDING OF\nMERCHANTABILITY, SATISFACTORY QUALITY AND FITNESS FOR A\nPARTICULAR PURPOSE. Please see the CERN OHL v.1.1 for applicable\nconditions" (at 258.8 156.55) (layer Cmts.User)
+  (gr_text "Copyright Tinkerforge GmbH 2017.\nThis documentation describes Open Hardware and is licensed under the\nCERN OHL v. 1.1.\nYou may redistribute and modify this documentation under the terms of the\nCERN OHL v.1.1. (http://ohwr.org/cernohl). This documentation is distributed\nWITHOUT ANY EXPRESS OR IMPLIED WARRANTY, INCLUDING OF\nMERCHANTABILITY, SATISFACTORY QUALITY AND FITNESS FOR A\nPARTICULAR PURPOSE. Please see the CERN OHL v.1.1 for applicable\nconditions" (at 258.8 156.55) (layer Cmts.User)
     (effects (font (size 0.8001 0.8001) (thickness 0.200025) italic))
   )
   (gr_text tinkerforge.com (at 182.1 64.3) (layer F.SilkS)
