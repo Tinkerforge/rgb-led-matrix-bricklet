@@ -32,4 +32,4 @@
 #define MATRIX_SERVICE_REQUEST_TX   3
 
 #define MATRIX_IRQ_TX               12
-#define MATRIX_IRQ_TX_PRIORITY      3
+#define MATRIX_IRQ_TX_PRIORITY      0
