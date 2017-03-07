@@ -26,25 +26,25 @@
 #include "xmc_vadc.h"
 
 #include "configs/config_matrix.h"
+#include "configs/config.h"
 
 #include "bricklib2/hal/system_timer/system_timer.h"
 
 #include <string.h>
 
 #define MATRIX_SPI_FREQUENCY 6400000
+#define MATRIX_HIGH_PATTERN 0b11111100
+#define MATRIX_LOW_PATTERN  0b11000000
+
 #define matrix_tx_irq_handler IRQ_Hdlr_12
 
 extern Matrix matrix;
-
-                                       // @6.4MHz
-#define MATRIX_HIGH_PATTERN 0b11000000 // 0.25us  + 0.75us
-#define MATRIX_LOW_PATTERN  0b11111000 // 0.625us + 0.375us
-
 void __attribute__((optimize("-O3"))) matrix_tx_irq_handler(void) {
 	while(!XMC_USIC_CH_TXFIFO_IsFull(MATRIX_USIC)) {
 		MATRIX_USIC->IN[0] = matrix.buffer_out[matrix.frame_current_index];
 		matrix.frame_current_index++;
-		if(matrix.frame_current_index == MATRIX_STUFFED_SIZE) {
+		if(matrix.frame_current_index >= MATRIX_STUFFED_SIZE) {
+			matrix.frame_current_index = 0;
 			matrix.frame_number++;
 			XMC_USIC_CH_TXFIFO_DisableEvent(MATRIX_USIC, XMC_USIC_CH_TXFIFO_EVENT_CONF_STANDARD);
 			return;
@@ -55,7 +55,7 @@ void __attribute__((optimize("-O3"))) matrix_tx_irq_handler(void) {
 void matrix_draw_frame(Matrix *matrix) {
 	uint32_t buffer_out_counter = 0;
 	for(uint32_t i = 0; i < MATRIX_SIZE; i++) {
-		for(uint8_t j = 0; j < MATRIX_CHANNELS; i++) {
+		for(uint32_t j = 0; j < MATRIX_CHANNELS; j++) {
 			uint8_t byte = 0;
 			switch(j) {
 				case 0: byte = matrix->buffer_in.r[i]; break;
@@ -63,7 +63,7 @@ void matrix_draw_frame(Matrix *matrix) {
 				case 2: byte = matrix->buffer_in.b[i]; break;
 			}
 
-			for(uint8_t k = 0; k < MATRIX_STUFFED_BITS_PER_BIT; k++) {
+			for(int32_t k = MATRIX_STUFFED_BITS_PER_BIT-1; k >= 0 ; k--) {
 				matrix->buffer_out[buffer_out_counter] = (byte & (1 << k)) ? MATRIX_HIGH_PATTERN : MATRIX_LOW_PATTERN;
 				buffer_out_counter++;
 			}
@@ -161,6 +161,7 @@ void matrix_init_adc(Matrix *matrix) {
 	XMC_VADC_GLOBAL_BackgroundTriggerConversion(VADC);
 }
 
+void matrix_init_spi(Matrix *matrix) {
 	// USIC channel configuration
 	const XMC_SPI_CH_CONFIG_t channel_config = {
 		.baudrate       = MATRIX_SPI_FREQUENCY,
@@ -172,12 +173,14 @@ void matrix_init_adc(Matrix *matrix) {
 	// MOSI pin configuration
 	const XMC_GPIO_CONFIG_t mosi_pin_config = {
 		.mode             = MATRIX_MOSI_PIN_AF,
-		.output_level     = XMC_GPIO_OUTPUT_LEVEL_HIGH
+		.output_level     = XMC_GPIO_OUTPUT_LEVEL_LOW
 	};
 
 	// Initialize USIC channel in SPI master mode
 	XMC_SPI_CH_Init(MATRIX_USIC, &channel_config);
 	MATRIX_USIC->SCTR &= ~USIC_CH_SCTR_PDL_Msk; // Set passive data level to 0
+	MATRIX_USIC->SCTR |= USIC_CH_SCTR_DOCFG_Msk; // Use correct polarity
+	MATRIX_USIC->PCR_SSCMode &= ~USIC_CH_PCR_SSCMode_TIWEN_Msk; // Disable time between bytes
 
 	XMC_SPI_CH_SetBitOrderMsbFirst(MATRIX_USIC);
 
@@ -187,10 +190,10 @@ void matrix_init_adc(Matrix *matrix) {
 	XMC_SPI_CH_SetTransmitMode(MATRIX_USIC, XMC_SPI_CH_MODE_STANDARD);
 
 	// SPI Mode: CPOL=1 and CPHA=1
-	MATRIX_USIC_CHANNEL->DX1CR |= USIC_CH_DX1CR_DPOL_Msk;
+	MATRIX_USIC_CHANNEL->DX1CR &= ~USIC_CH_DX1CR_DPOL_Msk;
 
 	// Configure transmit FIFO
-	XMC_USIC_CH_TXFIFO_Configure(MATRIX_USIC, 32, XMC_USIC_CH_FIFO_SIZE_32WORDS, 16);
+	XMC_USIC_CH_TXFIFO_Configure(MATRIX_USIC, 32, XMC_USIC_CH_FIFO_SIZE_16WORDS, 8);
 
 	// Set service request for tx FIFO transmit interrupt
 	XMC_USIC_CH_TXFIFO_SetInterruptNodePointer(MATRIX_USIC, XMC_USIC_CH_TXFIFO_INTERRUPT_NODE_POINTER_STANDARD, MATRIX_SERVICE_REQUEST_TX);  // IRQ MATRIX_IRQ_TX
