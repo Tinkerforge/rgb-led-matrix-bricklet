@@ -94,12 +94,12 @@ void matrix_init_adc(Matrix *matrix) {
 		.boundary1 = (uint32_t) 0, // Upper boundary value for Normal comparison mode
 
 		.class0 = {
-			.sample_time_std_conv     = 0,  		             // The Sample time is (2*tadci)
+			.sample_time_std_conv     = 31,                      // The Sample time is (2*tadci)
 			.conversion_mode_standard = XMC_VADC_CONVMODE_12BIT, // 12bit conversion Selected
 
 		},
 		.class1 = {
-			.sample_time_std_conv     = 0,			             // The Sample time is (2*tadci)
+			.sample_time_std_conv     = 31,                      // The Sample time is (2*tadci)
 			.conversion_mode_standard = XMC_VADC_CONVMODE_12BIT, // 12bit conversion Selected
 
 		},
