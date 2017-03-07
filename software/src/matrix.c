@@ -155,7 +155,7 @@ void matrix_init_adc(Matrix *matrix) {
 	// Initialize the global result register
 	XMC_VADC_GLOBAL_ResultInit(VADC, &adc_global_result_config);
 
-	XMC_VADC_GLOBAL_BackgroundAddChannelToSequence(VADC, 0, 7);
+	XMC_VADC_GLOBAL_BackgroundAddChannelToSequence(VADC, 0, MATRIX_ADC_CHANNEL);
 	XMC_VADC_GLOBAL_SetResultEventInterruptNode(VADC, XMC_VADC_SR_SHARED_SR0);
 
 	XMC_VADC_GLOBAL_BackgroundTriggerConversion(VADC);

@@ -21,7 +21,7 @@
 
 #include "xmc_gpio.h"
 
-// TODO: Add Voltage Input pin
+#define MATRIX_ADC_CHANNEL          7   // P2_2
 
 #define MATRIX_USIC_CHANNEL         USIC0_CH1
 #define MATRIX_USIC                 XMC_SPI0_CH1
