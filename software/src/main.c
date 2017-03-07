@@ -26,23 +26,19 @@
 
 #include "bricklib2/bootloader/bootloader.h"
 #include "bricklib2/hal/system_timer/system_timer.h"
-#include "bricklib2/hal/uartbb/uartbb.h"
 #include "bricklib2/utility/communication_callback.h"
 #include "communication.h"
 #include "matrix.h"
 
-Matrix *matrix;
+Matrix matrix;
 
 int main(void) {
-	uartbb_init();
-	uartbb_puts("Start RGB LED Matrix Bricklet\n\r");
-
 	communication_callback_init();
-	matrix_init(matrix);
+	matrix_init(&matrix);
 
 	while(true) {
 		bootloader_tick();
-		matrix_tick(matrix);
+		matrix_tick(&matrix);
 		communication_tick();
 	}
 
