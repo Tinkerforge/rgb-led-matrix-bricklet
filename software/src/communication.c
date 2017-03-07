@@ -112,7 +112,7 @@ BootloaderHandleMessageResponse draw_frame(const DrawFrame *data) {
 
 BootloaderHandleMessageResponse get_supply_voltage(const GetSupplyVoltage *data, GetSupplyVoltageResponse *response) {
 	response->header.length = sizeof(GetSupplyVoltageResponse);
-	response->voltage       = 42; // TODO: Implement me!
+	response->voltage       = matrix.voltage;
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }

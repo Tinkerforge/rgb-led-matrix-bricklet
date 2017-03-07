@@ -23,6 +23,7 @@
 
 #include "xmc_spi.h"
 #include "xmc_gpio.h"
+#include "xmc_vadc.h"
 
 #include "configs/config_matrix.h"
 
@@ -73,8 +74,92 @@ void matrix_draw_frame(Matrix *matrix) {
 	XMC_USIC_CH_TriggerServiceRequest(MATRIX_USIC, MATRIX_SERVICE_REQUEST_TX);
 }
 
-void matrix_init(Matrix *matrix) {
-	memset(matrix, 0, sizeof(Matrix));
+void matrix_measure_voltage(Matrix *matrix) {
+	static uint32_t last_time = 0;
+	if(system_timer_is_time_elapsed_ms(last_time, 250)) {
+		last_time = system_timer_get_ms();
+		uint32_t result = XMC_VADC_GLOBAL_GetDetailedResult(VADC);
+		if(result & (1 << 31)) {
+			// Resistor divisor is 1k to 1k so we have to go from 0-4095 to 0-3.3V with a multiplier of (1+1)/1 = 2
+			matrix->voltage = (result & 0xFFFF)*3300*2/4095;
+		}
+	}
+
+}
+
+void matrix_init_adc(Matrix *matrix) {
+	// This structure contains the Global related Configuration.
+	const XMC_VADC_GLOBAL_CONFIG_t adc_global_config = {
+		.boundary0 = (uint32_t) 0, // Lower boundary value for Normal comparison mode
+		.boundary1 = (uint32_t) 0, // Upper boundary value for Normal comparison mode
+
+		.class0 = {
+			.sample_time_std_conv     = 0,  		             // The Sample time is (2*tadci)
+			.conversion_mode_standard = XMC_VADC_CONVMODE_12BIT, // 12bit conversion Selected
+
+		},
+		.class1 = {
+			.sample_time_std_conv     = 0,			             // The Sample time is (2*tadci)
+			.conversion_mode_standard = XMC_VADC_CONVMODE_12BIT, // 12bit conversion Selected
+
+		},
+
+		.data_reduction_control         = 0, // Data Reduction disabled
+		.wait_for_read_mode             = 0, // GLOBRES Register will not be overwritten until the previous value is read
+		.event_gen_enable               = 0, // Result Event from GLOBRES is disabled
+		.disable_sleep_mode_control     = 0  // Sleep mode is enabled
+	};
+
+
+	// Global iclass0 configuration
+	const XMC_VADC_GLOBAL_CLASS_t adc_global_iclass_config = {
+		.conversion_mode_standard = XMC_VADC_CONVMODE_12BIT,
+		.sample_time_std_conv	  = 31,
+	};
+
+	// Global Result Register configuration structure
+	XMC_VADC_RESULT_CONFIG_t adc_global_result_config = {
+		.data_reduction_control = 0, // No Accumulation
+		.post_processing_mode   = XMC_VADC_DMM_REDUCTION_MODE,
+		.wait_for_read_mode  	= 1, // Enabled
+		.part_of_fifo       	= 0, // No FIFO
+		.event_gen_enable   	= 0  // Disable Result event
+	};
+
+	// LLD Background Scan Init Structure
+	const XMC_VADC_BACKGROUND_CONFIG_t adc_background_config = {
+		.conv_start_mode   = XMC_VADC_STARTMODE_CIR,       // Conversion start mode selected as cancel inject repeat
+		.req_src_priority  = XMC_VADC_GROUP_RS_PRIORITY_1, // Priority of the Background request source in the VADC module
+		.trigger_signal    = XMC_VADC_REQ_TR_A,            // If Trigger needed then this denotes the Trigger signal
+		.trigger_edge      = XMC_VADC_TRIGGER_EDGE_NONE,   // If Trigger needed then this denotes Trigger edge selected
+		.gate_signal       = XMC_VADC_REQ_GT_A,			   // If Gating needed then this denotes the Gating signal
+		.timer_mode        = 0,							   // Timer Mode Disabled
+		.external_trigger  = 0,                            // Trigger is Disabled
+		.req_src_interrupt = 0,                            // Background Request source interrupt Disabled
+		.enable_auto_scan  = 1,
+		.load_mode         = XMC_VADC_SCAN_LOAD_OVERWRITE
+	};
+
+
+	XMC_VADC_GLOBAL_Init(VADC, &adc_global_config);
+	XMC_VADC_GLOBAL_StartupCalibration(VADC);
+
+	// Initialize the Global Conversion class 0
+	XMC_VADC_GLOBAL_InputClassInit(VADC, adc_global_iclass_config, XMC_VADC_GROUP_CONV_STD, 0);
+	// Initialize the Global Conversion class 1
+	XMC_VADC_GLOBAL_InputClassInit(VADC, adc_global_iclass_config, XMC_VADC_GROUP_CONV_STD, 1);
+
+	// Initialize the Background Scan hardware
+	XMC_VADC_GLOBAL_BackgroundInit(VADC, &adc_background_config);
+
+	// Initialize the global result register
+	XMC_VADC_GLOBAL_ResultInit(VADC, &adc_global_result_config);
+
+	XMC_VADC_GLOBAL_BackgroundAddChannelToSequence(VADC, 0, 7);
+	XMC_VADC_GLOBAL_SetResultEventInterruptNode(VADC, XMC_VADC_SR_SHARED_SR0);
+
+	XMC_VADC_GLOBAL_BackgroundTriggerConversion(VADC);
+}
 
 	// USIC channel configuration
 	const XMC_SPI_CH_CONFIG_t channel_config = {
@@ -121,7 +206,17 @@ void matrix_init(Matrix *matrix) {
 	XMC_GPIO_Init(MATRIX_MOSI_PIN, &mosi_pin_config);
 }
 
+void matrix_init(Matrix *matrix) {
+	memset(matrix, 0, sizeof(Matrix));
+
+	matrix_init_spi(matrix);
+	matrix_init_adc(matrix);
+}
+
+
 void matrix_tick(Matrix *matrix) {
+	matrix_measure_voltage(matrix);
+
 	if(matrix->frame_duration != 0) {
 		if(system_timer_is_time_elapsed_ms(matrix->frame_last_time, matrix->frame_duration)) {
 			matrix_draw_frame(matrix);

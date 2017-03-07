@@ -51,6 +51,8 @@ typedef struct {
 	bool     frame_started;
 	uint32_t frame_current_index;
 	uint32_t frame_last_time;
+
+	uint16_t voltage;
 } Matrix;
 
 void matrix_init(Matrix *matrix);
