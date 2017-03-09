@@ -58,8 +58,8 @@ void matrix_draw_frame(Matrix *matrix) {
 		for(uint32_t j = 0; j < MATRIX_CHANNELS; j++) {
 			uint8_t byte = 0;
 			switch(j) {
-				case 0: byte = matrix->buffer_in.r[i]; break;
-				case 1: byte = matrix->buffer_in.g[i]; break;
+				case 0: byte = matrix->buffer_in.g[i]; break;
+				case 1: byte = matrix->buffer_in.r[i]; break;
 				case 2: byte = matrix->buffer_in.b[i]; break;
 			}
 
