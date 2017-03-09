@@ -32,9 +32,9 @@
 
 #include <string.h>
 
-#define MATRIX_SPI_FREQUENCY 6400000
-#define MATRIX_HIGH_PATTERN 0b11111100
-#define MATRIX_LOW_PATTERN  0b11000000
+#define MATRIX_SPI_FREQUENCY 3200000
+#define MATRIX_HIGH_PATTERN 0b1110
+#define MATRIX_LOW_PATTERN  0b1000
 
 #define matrix_tx_irq_handler IRQ_Hdlr_12
 
@@ -63,13 +63,21 @@ void matrix_draw_frame(Matrix *matrix) {
 				case 2: byte = matrix->buffer_in.b[i]; break;
 			}
 
-			for(int32_t k = MATRIX_STUFFED_BITS_PER_BIT-1; k >= 0 ; k--) {
-				matrix->buffer_out[buffer_out_counter] = (byte & (1 << k)) ? MATRIX_HIGH_PATTERN : MATRIX_LOW_PATTERN;
-				buffer_out_counter++;
+			for(int32_t k = 7; k >= 0 ; k--) {
+				uint8_t pattern = (byte & (1 << k)) ? MATRIX_HIGH_PATTERN : MATRIX_LOW_PATTERN;
+
+				if(k & 1) {
+					matrix->buffer_out[buffer_out_counter] = pattern << MATRIX_STUFFED_BITS_PER_BIT;
+				} else {
+					matrix->buffer_out[buffer_out_counter] |= pattern;
+					buffer_out_counter++;
+				}
 			}
 		}
 	}
 
+	matrix_buffer_pointer = &matrix->buffer_out[0];
+	matrix->frame_current_index = 0;
 	XMC_USIC_CH_TXFIFO_EnableEvent(MATRIX_USIC, XMC_USIC_CH_TXFIFO_EVENT_CONF_STANDARD);
 	XMC_USIC_CH_TriggerServiceRequest(MATRIX_USIC, MATRIX_SERVICE_REQUEST_TX);
 }
