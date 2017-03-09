@@ -39,16 +39,22 @@
 #define matrix_tx_irq_handler IRQ_Hdlr_12
 
 extern Matrix matrix;
+
+// Use global pointer to be used more efficiently in IRQ handler
+// Using matrix.* in IRQ handler was about 2x slower!
+uint8_t *matrix_buffer_pointer = matrix.buffer_out;
+const uint8_t *matrix_buffer_pointer_end = matrix.buffer_out + MATRIX_STUFFED_SIZE-1;
+
 void __attribute__((optimize("-O3"))) matrix_tx_irq_handler(void) {
-	while(!XMC_USIC_CH_TXFIFO_IsFull(MATRIX_USIC)) {
-		MATRIX_USIC->IN[0] = matrix.buffer_out[matrix.frame_current_index];
-		matrix.frame_current_index++;
-		if(matrix.frame_current_index >= MATRIX_STUFFED_SIZE) {
-			matrix.frame_current_index = 0;
-			matrix.frame_number++;
-			XMC_USIC_CH_TXFIFO_DisableEvent(MATRIX_USIC, XMC_USIC_CH_TXFIFO_EVENT_CONF_STANDARD);
-			return;
-		}
+	while(!(MATRIX_USIC->TRBSR & USIC_CH_TRBSR_TFULL_Msk)) {
+		MATRIX_USIC->IN[0] = *matrix_buffer_pointer++;
+	}
+
+	// We always run until the buffer is full, we may overrun the actual number of LEDs,
+	// but the actual buffer is many bytes bigger and the last bytes in the array are
+	// always 0. So the additional zeroes at the end do
+	if(matrix_buffer_pointer > matrix_buffer_pointer_end) {
+		XMC_USIC_CH_TXFIFO_DisableEvent(MATRIX_USIC, XMC_USIC_CH_TXFIFO_EVENT_CONF_STANDARD);
 	}
 }
 

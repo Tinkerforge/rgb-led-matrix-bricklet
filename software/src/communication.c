@@ -128,6 +128,7 @@ bool handle_frame_started_callback(void) {
 		tfp_make_default_header(&cb.header, bootloader_get_uid(), sizeof(FrameStartedCallback), FID_CALLBACK_FRAME_STARTED);
 		if(matrix.frame_started) {
 			cb.frame_number = matrix.frame_number;
+			matrix.frame_number++;
 			is_buffered = true;
 			matrix.frame_started = false;
 		} else {

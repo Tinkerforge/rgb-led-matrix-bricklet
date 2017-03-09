@@ -27,6 +27,10 @@
 #define STARTUP_SYSTEM_INIT_ALREADY_DONE
 #define SYSTEM_TIMER_FREQUENCY 1000 // Use 1 kHz system timer
 
+// RGB LED Matrix Bricklet does not support overflow count to save on time used
+// in interrupt
+#define BOOTLOADER_XMC_RX_IRQ_NO_OVERFLOW
+
 #define UARTBB_TX_PIN P0_0
 
 #define FIRMWARE_VERSION_MAJOR 2

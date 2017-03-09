@@ -38,7 +38,7 @@ typedef struct {
 
 typedef struct {
 	MatrixBufferIn buffer_in;
-	uint8_t  buffer_out[MATRIX_STUFFED_SIZE];
+	uint8_t  buffer_out[MATRIX_STUFFED_SIZE + 1024];
 	uint16_t frame_duration;
 	uint32_t frame_number;
 
@@ -47,6 +47,9 @@ typedef struct {
 	uint32_t frame_last_time;
 
 	uint16_t voltage;
+
+	uint8_t *buffer_pointer;
+	uint8_t *buffer_pointer_end;
 } Matrix;
 
 void matrix_init(Matrix *matrix);
