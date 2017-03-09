@@ -61,12 +61,18 @@ void __attribute__((optimize("-O3"))) matrix_tx_irq_handler(void) {
 void matrix_draw_frame(Matrix *matrix) {
 	uint32_t buffer_out_counter = 0;
 	for(uint32_t i = 0; i < MATRIX_SIZE; i++) {
+		uint32_t pos = i;
+		if(i/8 & 1) {
+			uint8_t line = i/8;
+			uint8_t line_pos = i - line*8;
+			pos = line*8 + (7-line_pos);
+		}
 		for(uint32_t j = 0; j < MATRIX_CHANNELS; j++) {
 			uint8_t byte = 0;
 			switch(j) {
-				case 0: byte = matrix->buffer_in.g[i]; break;
-				case 1: byte = matrix->buffer_in.r[i]; break;
-				case 2: byte = matrix->buffer_in.b[i]; break;
+				case 0: byte = matrix->buffer_in.g[pos]; break;
+				case 1: byte = matrix->buffer_in.r[pos]; break;
+				case 2: byte = matrix->buffer_in.b[pos]; break;
 			}
 
 			for(int32_t k = 7; k >= 0 ; k--) {
