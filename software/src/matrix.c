@@ -207,6 +207,7 @@ void matrix_init_spi(Matrix *matrix) {
 
 	// Configure MOSI pin
 	XMC_GPIO_Init(MATRIX_MOSI_PIN, &mosi_pin_config);
+	XMC_GPIO_SetHardwareControl(MATRIX_MOSI_PIN, XMC_GPIO_HWCTRL_DISABLED);
 }
 
 void matrix_init(Matrix *matrix) {
