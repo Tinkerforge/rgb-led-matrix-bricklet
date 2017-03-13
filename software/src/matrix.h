@@ -28,7 +28,9 @@
 #define MATRIX_SIZE 64
 #define MATRIX_CHANNELS 3
 #define MATRIX_STUFFED_BITS_PER_BIT 4
-#define MATRIX_STUFFED_SIZE MATRIX_SIZE*MATRIX_CHANNELS*MATRIX_STUFFED_BITS_PER_BIT
+
+// Stuffed size is with 16 bit wide words
+#define MATRIX_STUFFED_SIZE ((MATRIX_SIZE*MATRIX_CHANNELS*MATRIX_STUFFED_BITS_PER_BIT)/sizeof(uint16_t))
 
 typedef struct {
 	uint8_t r[MATRIX_SIZE];
@@ -38,7 +40,7 @@ typedef struct {
 
 typedef struct {
 	MatrixBufferIn buffer_in;
-	uint8_t  buffer_out[MATRIX_STUFFED_SIZE + 1024];
+	uint16_t  buffer_out[MATRIX_STUFFED_SIZE + 512];
 	uint16_t frame_duration;
 	uint32_t frame_number;
 

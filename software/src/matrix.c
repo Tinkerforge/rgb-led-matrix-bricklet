@@ -42,8 +42,8 @@ extern Matrix matrix;
 
 // Use global pointer to be used more efficiently in IRQ handler
 // Using matrix.* in IRQ handler was about 2x slower!
-uint8_t *matrix_buffer_pointer = matrix.buffer_out;
-const uint8_t *matrix_buffer_pointer_end = matrix.buffer_out + MATRIX_STUFFED_SIZE-1;
+uint16_t *matrix_buffer_pointer = matrix.buffer_out;
+const uint16_t *matrix_buffer_pointer_end = matrix.buffer_out + MATRIX_STUFFED_SIZE-1;
 
 void __attribute__((optimize("-O3"))) matrix_tx_irq_handler(void) {
 	while(!(MATRIX_USIC->TRBSR & USIC_CH_TRBSR_TFULL_Msk)) {
@@ -77,12 +77,11 @@ void matrix_draw_frame(Matrix *matrix) {
 
 			for(int32_t k = 7; k >= 0 ; k--) {
 				uint8_t pattern = (byte & (1 << k)) ? MATRIX_HIGH_PATTERN : MATRIX_LOW_PATTERN;
-
-				if(k & 1) {
-					matrix->buffer_out[buffer_out_counter] = pattern << MATRIX_STUFFED_BITS_PER_BIT;
-				} else {
-					matrix->buffer_out[buffer_out_counter] |= pattern;
+				uint8_t last_two_bit_value = k & 0b11;
+				matrix->buffer_out[buffer_out_counter] |= (pattern << (MATRIX_STUFFED_BITS_PER_BIT*last_two_bit_value));
+				if(last_two_bit_value == 0b00) {
 					buffer_out_counter++;
+					matrix->buffer_out[buffer_out_counter] = 0;
 				}
 			}
 		}
@@ -204,8 +203,8 @@ void matrix_init_spi(Matrix *matrix) {
 
 	XMC_SPI_CH_SetBitOrderMsbFirst(MATRIX_USIC);
 
-	XMC_SPI_CH_SetWordLength(MATRIX_USIC, (uint8_t)8U);
-	XMC_SPI_CH_SetFrameLength(MATRIX_USIC, (uint8_t)64U);
+	XMC_SPI_CH_SetWordLength(MATRIX_USIC, 16);
+	XMC_SPI_CH_SetFrameLength(MATRIX_USIC, 64);
 
 	XMC_SPI_CH_SetTransmitMode(MATRIX_USIC, XMC_SPI_CH_MODE_STANDARD);
 
