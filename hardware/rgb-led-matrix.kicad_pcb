@@ -1,9 +1,9 @@
-(kicad_pcb (version 4) (host pcbnew 4.0.2+e4-6225~38~ubuntu15.10.1-stable)
+(kicad_pcb (version 4) (host pcbnew 4.0.2+dfsg1-stable)
 
   (general
     (links 368)
     (no_connects 0)
-    (area 112.109499 54.109499 187.490501 109.490501)
+    (area 111.444999 53.444999 282.895869 162.490743)
     (thickness 1.6002)
     (drawings 15)
     (tracks 5643)
@@ -77,7 +77,7 @@
     (pad_to_mask_clearance 0)
     (aux_axis_origin 112.3 54.3)
     (grid_origin 112.3 54.3)
-    (visible_elements FFFF3FBF)
+    (visible_elements FFFFBFFF)
     (pcbplotparams
       (layerselection 0x00030_80000001)
       (usegerberextensions true)
@@ -404,11 +404,11 @@
   )
 
   (module kicad-libraries:CE_5mm (layer Rückseite) (tedit 0) (tstamp 589BD51F)
-    (at 156.8 81.8 180)
-    (fp_text reference VAL (at 0 0 180) (layer B.SilkS) hide
+    (at 156.8 81.8)
+    (fp_text reference VAL (at 0 0) (layer B.SilkS) hide
       (effects (font (size 1.143 1.143) (thickness 0.1778)) (justify mirror))
     )
-    (fp_text value CE_5mm (at 0 0 180) (layer B.SilkS) hide
+    (fp_text value CE_5mm (at 0 0) (layer B.SilkS) hide
       (effects (font (size 1.143 1.143) (thickness 0.1778)) (justify mirror))
     )
     (fp_poly (pts (xy -0.55372 -1.67132) (xy -0.5715 -1.67386) (xy -0.57912 -1.6764) (xy -0.59436 -1.6764)
