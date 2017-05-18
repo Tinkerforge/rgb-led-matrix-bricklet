@@ -1,4 +1,4 @@
-update=Di 07 Mär 2017 16:47:38 CET
+update=Do 18 Mai 2017 11:50:21 CEST
 version=1
 last_client=kicad
 [cvpcb]
@@ -40,9 +40,11 @@ SolderMaskMinWidth=0
 DrawSegmentWidth=0.381
 BoardOutlineThickness=0.381
 ModuleOutlineThickness=0.01
+[general]
+version=1
 [eeschema]
 version=1
-LibDir=../../motorized-poti-bricklet/hardware/kicad-libraries
+LibDir=kicad-libraries.pretty
 [eeschema/libraries]
 LibName1=tinkerforge
 LibName2=power
@@ -75,5 +77,3 @@ LibName28=opto
 LibName29=atmel
 LibName30=contrib
 LibName31=valves
-[general]
-version=1
