@@ -3,7 +3,7 @@
   (general
     (links 368)
     (no_connects 0)
-    (area 112.109499 54.109499 187.490501 109.490501)
+    (area 111.444999 53.444999 282.795857 162.890793)
     (thickness 1.6002)
     (drawings 15)
     (tracks 5644)
@@ -23,8 +23,8 @@
   )
 
   (layers
-    (0 Vorderseite signal)
-    (31 Rückseite signal)
+    (0 Vorderseite signal hide)
+    (31 Rückseite signal hide)
     (32 B.Adhes user)
     (33 F.Adhes user)
     (34 B.Paste user)
@@ -9840,14 +9840,14 @@
     )
   )
 
-  (module kicad-libraries:R1206 (layer Vorderseite) (tedit 58FA4AE5) (tstamp 5910B3F4)
+  (module kicad-libraries:R1206 (layer Vorderseite) (tedit 591DA9E4) (tstamp 5910B3F4)
     (at 183.6 89.8 270)
     (path /58997F46)
     (attr smd)
     (fp_text reference FB2 (at 0 0.5375 270) (layer F.Fab)
       (effects (font (size 0.3 0.3) (thickness 0.075)))
     )
-    (fp_text value FILTER (at 0 -0.65 270) (layer F.Fab)
+    (fp_text value "FB 6A" (at 0 -0.65 270) (layer F.Fab)
       (effects (font (size 0.3 0.3) (thickness 0.075)))
     )
     (fp_line (start -2.25044 -1.09982) (end -2.25044 1.09982) (layer F.Fab) (width 0.001))
