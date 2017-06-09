@@ -59,6 +59,8 @@ void __attribute__((optimize("-O3"))) __attribute__ ((section (".ram_code"))) ma
 }
 
 void matrix_draw_frame(Matrix *matrix) {
+	matrix->buffer_out[0] = 0;
+
 	uint32_t buffer_out_counter = 0;
 	for(uint32_t i = 0; i < MATRIX_SIZE; i++) {
 		uint32_t pos = i;
