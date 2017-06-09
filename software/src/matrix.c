@@ -45,7 +45,7 @@ extern Matrix matrix;
 uint16_t *matrix_buffer_pointer = matrix.buffer_out;
 const uint16_t *matrix_buffer_pointer_end = matrix.buffer_out + MATRIX_STUFFED_SIZE-1;
 
-void __attribute__((optimize("-O3"))) matrix_tx_irq_handler(void) {
+void __attribute__((optimize("-O3"))) __attribute__ ((section (".ram_code"))) matrix_tx_irq_handler(void) {
 	while(!(MATRIX_USIC->TRBSR & USIC_CH_TRBSR_TFULL_Msk)) {
 		MATRIX_USIC->IN[0] = *matrix_buffer_pointer++;
 	}
