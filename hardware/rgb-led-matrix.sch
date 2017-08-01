@@ -29,7 +29,6 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:rgb-led-matrix-cache
 EELAYER 25 0
 EELAYER END
 $Descr A3 16535 11693
