@@ -1,11 +1,11 @@
-(kicad_pcb (version 4) (host pcbnew 4.0.7-e0-6372~58~ubuntu16.10.1)
+(kicad_pcb (version 4) (host pcbnew 4.0.7-e2-6376~58~ubuntu17.04.1)
 
   (general
     (links 368)
     (no_connects 0)
-    (area 112.109499 54.109499 187.490501 109.490501)
+    (area 111.444999 53.444999 282.795857 162.890793)
     (thickness 1.6002)
-    (drawings 15)
+    (drawings 16)
     (tracks 5644)
     (zones 0)
     (modules 160)
@@ -10404,6 +10404,9 @@
     )
   )
 
+  (gr_text status (at 115.3 68.5 90) (layer F.SilkS)
+    (effects (font (size 0.8001 0.8001) (thickness 0.14986)))
+  )
   (gr_text 5V (at 186.5 84.3 90) (layer B.SilkS)
     (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
   )
