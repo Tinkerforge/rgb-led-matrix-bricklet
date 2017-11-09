@@ -103,7 +103,7 @@ BootloaderHandleMessageResponse get_frame_duration(const GetFrameDuration *data,
 }
 
 BootloaderHandleMessageResponse draw_frame(const DrawFrame *data) {
-	if(matrix.frame_duration != 0) {
+	if(matrix.frame_duration == 0) {
 		matrix_draw_frame(&matrix);
 	}
 

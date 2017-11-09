@@ -42,8 +42,8 @@ extern Matrix matrix;
 
 // Use global pointer to be used more efficiently in IRQ handler
 // Using matrix.* in IRQ handler was about 2x slower!
-uint16_t *matrix_buffer_pointer = matrix.buffer_out;
 const uint16_t *matrix_buffer_pointer_end = matrix.buffer_out + MATRIX_STUFFED_SIZE-1;
+uint16_t *matrix_buffer_pointer = matrix.buffer_out + MATRIX_STUFFED_SIZE;
 
 void __attribute__((optimize("-O3"))) __attribute__ ((section (".ram_code"))) matrix_tx_irq_handler(void) {
 	while(!(MATRIX_USIC->TRBSR & USIC_CH_TRBSR_TFULL_Msk)) {
@@ -52,13 +52,21 @@ void __attribute__((optimize("-O3"))) __attribute__ ((section (".ram_code"))) ma
 
 	// We always run until the buffer is full, we may overrun the actual number of LEDs,
 	// but the actual buffer is many bytes bigger and the last bytes in the array are
-	// always 0. So the additional zeroes at the end do
+	// always 0. So the additional zeroes at the end do nothing.
 	if(matrix_buffer_pointer > matrix_buffer_pointer_end) {
 		XMC_USIC_CH_TXFIFO_DisableEvent(MATRIX_USIC, XMC_USIC_CH_TXFIFO_EVENT_CONF_STANDARD);
 	}
 }
 
 void matrix_draw_frame(Matrix *matrix) {
+	// Only allow draw frame if last frame is already done
+	if(matrix_buffer_pointer <= matrix_buffer_pointer_end) {
+		return;
+	}
+
+	matrix->frame_started = true;
+	matrix->frame_last_time = system_timer_get_ms();
+
 	matrix->buffer_out[0] = 0;
 
 	uint32_t buffer_out_counter = 0;
@@ -105,7 +113,6 @@ void matrix_measure_voltage(Matrix *matrix) {
 			matrix->voltage = (result & 0xFFFF)*3300*2/4095;
 		}
 	}
-
 }
 
 void matrix_init_adc(Matrix *matrix) {
@@ -245,8 +252,6 @@ void matrix_tick(Matrix *matrix) {
 	if(matrix->frame_duration != 0) {
 		if(system_timer_is_time_elapsed_ms(matrix->frame_last_time, matrix->frame_duration)) {
 			matrix_draw_frame(matrix);
-			matrix->frame_started = true;
-			matrix->frame_last_time = system_timer_get_ms();
 		}
 	}
 }
