@@ -1,9 +1,9 @@
-(kicad_pcb (version 4) (host pcbnew 4.0.7-e2-6376~58~ubuntu17.04.1)
+(kicad_pcb (version 4) (host pcbnew 4.0.2+dfsg1-stable)
 
   (general
     (links 368)
     (no_connects 0)
-    (area 111.444999 53.444999 282.795857 162.890793)
+    (area 112.109499 54.109499 187.490501 109.490501)
     (thickness 1.6002)
     (drawings 16)
     (tracks 5644)
@@ -6367,11 +6367,6 @@
       (net 1 GND))
     (pad 2 thru_hole circle (at 2.49936 0 270) (size 2.99974 2.99974) (drill 1.30048) (layers *.Cu *.Mask F.SilkS)
       (net 70 "Net-(C5-Pad2)"))
-    (model Connectors/AKL_5_2.wrl
-      (at (xyz 0 -0.02 0))
-      (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
-    )
   )
 
   (module kicad-libraries:SOT23GDS (layer Vorderseite) (tedit 58FA4BEA) (tstamp 564C68A9)
