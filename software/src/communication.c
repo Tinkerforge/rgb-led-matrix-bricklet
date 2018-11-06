@@ -52,8 +52,8 @@ BootloaderHandleMessageResponse set_red(const SetRed *data) {
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
-BootloaderHandleMessageResponse get_red(const GetRed *data, GetRedResponse *response) {
-	response->header.length = sizeof(GetRedResponse);
+BootloaderHandleMessageResponse get_red(const GetRed *data, GetRed_Response *response) {
+	response->header.length = sizeof(GetRed_Response);
 	memcpy(response->red, matrix.buffer_in.r, MATRIX_SIZE);
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
@@ -65,8 +65,8 @@ BootloaderHandleMessageResponse set_green(const SetGreen *data) {
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
-BootloaderHandleMessageResponse get_green(const GetGreen *data, GetGreenResponse *response) {
-	response->header.length = sizeof(GetGreenResponse);
+BootloaderHandleMessageResponse get_green(const GetGreen *data, GetGreen_Response *response) {
+	response->header.length = sizeof(GetGreen_Response);
 	memcpy(response->green, matrix.buffer_in.g, MATRIX_SIZE);
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
@@ -78,8 +78,8 @@ BootloaderHandleMessageResponse set_blue(const SetBlue *data) {
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
-BootloaderHandleMessageResponse get_blue(const GetBlue *data, GetBlueResponse *response) {
-	response->header.length = sizeof(GetBlueResponse);
+BootloaderHandleMessageResponse get_blue(const GetBlue *data, GetBlue_Response *response) {
+	response->header.length = sizeof(GetBlue_Response);
 	memcpy(response->blue, matrix.buffer_in.b, MATRIX_SIZE);
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
@@ -95,8 +95,8 @@ BootloaderHandleMessageResponse set_frame_duration(const SetFrameDuration *data)
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
-BootloaderHandleMessageResponse get_frame_duration(const GetFrameDuration *data, GetFrameDurationResponse *response) {
-	response->header.length  = sizeof(GetFrameDurationResponse);
+BootloaderHandleMessageResponse get_frame_duration(const GetFrameDuration *data, GetFrameDuration_Response *response) {
+	response->header.length  = sizeof(GetFrameDuration_Response);
 	response->frame_duration = matrix.frame_duration;
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
@@ -110,22 +110,19 @@ BootloaderHandleMessageResponse draw_frame(const DrawFrame *data) {
 	return HANDLE_MESSAGE_RESPONSE_EMPTY;
 }
 
-BootloaderHandleMessageResponse get_supply_voltage(const GetSupplyVoltage *data, GetSupplyVoltageResponse *response) {
-	response->header.length = sizeof(GetSupplyVoltageResponse);
+BootloaderHandleMessageResponse get_supply_voltage(const GetSupplyVoltage *data, GetSupplyVoltage_Response *response) {
+	response->header.length = sizeof(GetSupplyVoltage_Response);
 	response->voltage       = matrix.voltage;
 
 	return HANDLE_MESSAGE_RESPONSE_NEW_MESSAGE;
 }
 
-
-
-
 bool handle_frame_started_callback(void) {
 	static bool is_buffered = false;
-	static FrameStartedCallback cb;
+	static FrameStarted_Callback cb;
 
 	if(!is_buffered) {
-		tfp_make_default_header(&cb.header, bootloader_get_uid(), sizeof(FrameStartedCallback), FID_CALLBACK_FRAME_STARTED);
+		tfp_make_default_header(&cb.header, bootloader_get_uid(), sizeof(FrameStarted_Callback), FID_CALLBACK_FRAME_STARTED);
 		if(matrix.frame_started) {
 			cb.frame_number = matrix.frame_number;
 			matrix.frame_number++;
@@ -137,7 +134,7 @@ bool handle_frame_started_callback(void) {
 	}
 
 	if(bootloader_spitfp_is_send_possible(&bootloader_status.st)) {
-		bootloader_spitfp_send_ack_and_message(&bootloader_status, (uint8_t*)&cb, sizeof(FrameStartedCallback));
+		bootloader_spitfp_send_ack_and_message(&bootloader_status, (uint8_t*)&cb, sizeof(FrameStarted_Callback));
 		is_buffered = false;
 		return true;
 	} else {

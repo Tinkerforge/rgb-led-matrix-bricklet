@@ -61,7 +61,7 @@ typedef struct {
 typedef struct {
 	TFPMessageHeader header;
 	uint8_t red[64];
-} __attribute__((__packed__)) GetRedResponse;
+} __attribute__((__packed__)) GetRed_Response;
 
 typedef struct {
 	TFPMessageHeader header;
@@ -75,7 +75,7 @@ typedef struct {
 typedef struct {
 	TFPMessageHeader header;
 	uint8_t green[64];
-} __attribute__((__packed__)) GetGreenResponse;
+} __attribute__((__packed__)) GetGreen_Response;
 
 typedef struct {
 	TFPMessageHeader header;
@@ -89,7 +89,7 @@ typedef struct {
 typedef struct {
 	TFPMessageHeader header;
 	uint8_t blue[64];
-} __attribute__((__packed__)) GetBlueResponse;
+} __attribute__((__packed__)) GetBlue_Response;
 
 typedef struct {
 	TFPMessageHeader header;
@@ -103,7 +103,7 @@ typedef struct {
 typedef struct {
 	TFPMessageHeader header;
 	uint16_t frame_duration;
-} __attribute__((__packed__)) GetFrameDurationResponse;
+} __attribute__((__packed__)) GetFrameDuration_Response;
 
 typedef struct {
 	TFPMessageHeader header;
@@ -116,25 +116,25 @@ typedef struct {
 typedef struct {
 	TFPMessageHeader header;
 	uint16_t voltage;
-} __attribute__((__packed__)) GetSupplyVoltageResponse;
+} __attribute__((__packed__)) GetSupplyVoltage_Response;
 
 typedef struct {
 	TFPMessageHeader header;
 	uint32_t frame_number;
-} __attribute__((__packed__)) FrameStartedCallback;
+} __attribute__((__packed__)) FrameStarted_Callback;
 
 
 // Function prototypes
 BootloaderHandleMessageResponse set_red(const SetRed *data);
-BootloaderHandleMessageResponse get_red(const GetRed *data, GetRedResponse *response);
+BootloaderHandleMessageResponse get_red(const GetRed *data, GetRed_Response *response);
 BootloaderHandleMessageResponse set_green(const SetGreen *data);
-BootloaderHandleMessageResponse get_green(const GetGreen *data, GetGreenResponse *response);
+BootloaderHandleMessageResponse get_green(const GetGreen *data, GetGreen_Response *response);
 BootloaderHandleMessageResponse set_blue(const SetBlue *data);
-BootloaderHandleMessageResponse get_blue(const GetBlue *data, GetBlueResponse *response);
+BootloaderHandleMessageResponse get_blue(const GetBlue *data, GetBlue_Response *response);
 BootloaderHandleMessageResponse set_frame_duration(const SetFrameDuration *data);
-BootloaderHandleMessageResponse get_frame_duration(const GetFrameDuration *data, GetFrameDurationResponse *response);
+BootloaderHandleMessageResponse get_frame_duration(const GetFrameDuration *data, GetFrameDuration_Response *response);
 BootloaderHandleMessageResponse draw_frame(const DrawFrame *data);
-BootloaderHandleMessageResponse get_supply_voltage(const GetSupplyVoltage *data, GetSupplyVoltageResponse *response);
+BootloaderHandleMessageResponse get_supply_voltage(const GetSupplyVoltage *data, GetSupplyVoltage_Response *response);
 
 // Callbacks
 bool handle_frame_started_callback(void);
